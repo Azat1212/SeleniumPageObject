@@ -7,6 +7,7 @@ namespace SeleniumPageObject.Pages
     internal abstract class BasePage
     {
         public IWebDriver Driver;
+        //public IWa
 
         public BasePage(IWebDriver driver)
         {
@@ -20,25 +21,10 @@ namespace SeleniumPageObject.Pages
             Driver.Navigate().GoToUrl(Url);
         }
 
-        public void WaitLoadForElement(By locator, ushort seconds = 10)
+        public void WaitShowElement(By locator)
         {
-            var waitForElement = new WebDriverWait(Driver, TimeSpan.FromSeconds(seconds));
-
-            Func<IWebDriver, bool> waiter = new Func<IWebDriver, bool>((IWebDriver web) =>
-            {
-                try
-                {
-                    web.FindElement(locator);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    return false;
-                }
-            });
-
-            waitForElement.Message = $"Failed to wait load element {locator} on page {Driver.Url}";
-            waitForElement.Until(waiter);
+            var iWait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
+            iWait.Until(ExpectedConditions.ElementIsVisible(locator));
         }
     }
 }

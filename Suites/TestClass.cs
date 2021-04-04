@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -23,7 +24,9 @@ namespace SeleniumPageObject.Suites
         [OneTimeSetUp]
         public void SetUp()
         {
-            _driver = new ChromeDriver();
+            var options = new ChromeOptions();
+            options.AddArgument("--start-maximized");
+            _driver = new ChromeDriver(options);
             _homePage = new HomePage(_driver);
             _travelPage = new TravelPage(_driver);
             _buyPolisPage = new BuyPolisPage(_driver);
@@ -56,7 +59,7 @@ namespace SeleniumPageObject.Suites
         {
             _travelPage.GetBuyPolisyBtnElement().Click();
 
-            Assert.That(_buyPolisPage.Url.Contains(_driver.Url));
+            Assert.That(_driver.Url.Contains(_buyPolisPage.Url));
         }
 
         [TestCase(TestName = "_04_Оформление полиса"), Order(4)]
@@ -67,7 +70,7 @@ namespace SeleniumPageObject.Suites
                 .FillEndDate(DateTime.Today.AddDays(15))
                 .MakeAPolicyBtnElement();
 
-            _buyPolisPage.WaitLoadForElement(By.XPath("//*[label='Страхователь]"));
+            _buyPolisPage.WaitShowElement(By.XPath("//*[.='Страхователь']"));
         }
     }
 }

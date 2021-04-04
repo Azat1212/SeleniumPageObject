@@ -44,11 +44,5 @@ namespace SeleniumPageObject.Pages
             element.SendKeys(date.Date.ToString("d"));
             return this;
         }
-        
-        //public IWebElement InsuredHeader(DateTime date)
-        //{
-        //}
-
-
     }
 }

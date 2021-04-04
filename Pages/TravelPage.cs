@@ -12,8 +12,7 @@ namespace SeleniumPageObject.Pages
 
         public IWebElement GetBuyPolisyBtnElement()
         {
-            By locator = By.XPath("//*[@id='travel_banner_button_buy]"); 
-            return Driver.FindElement(locator);
+            return Driver.FindElement(By.Id("travel_banner_button_buy"));
         }
     }
 }
