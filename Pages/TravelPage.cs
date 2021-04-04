@@ -10,9 +10,10 @@ namespace SeleniumPageObject.Pages
 
         public override string Url { get; set; } = "https://shop.vsk.ru/travel";
 
-        public IWebElement GetBuyPolisBtnElement()
+        public IWebElement GetBuyPolisyBtnElement()
         {
-            return Driver.FindElement(By.Id("travel_banner_button_buy"));
+            By locator = By.XPath("//*[@id='travel_banner_button_buy]"); 
+            return Driver.FindElement(locator);
         }
     }
 }

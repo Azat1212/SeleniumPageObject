@@ -15,56 +15,59 @@ namespace SeleniumPageObject.Suites
     [TestFixture]
     class TestClass
     {
-        private IWebDriver driver;
+        private IWebDriver _driver;
+        private HomePage _homePage;
+        private TravelPage _travelPage;
+        private BuyPolisPage _buyPolisPage;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            driver = new ChromeDriver();
+            _driver = new ChromeDriver();
+            _homePage = new HomePage(_driver);
+            _travelPage = new TravelPage(_driver);
+            _buyPolisPage = new BuyPolisPage(_driver);
         }
-        
+
         [OneTimeTearDown]
         public void Dispose()
         {
-            driver.Quit();
-            driver.Dispose();
+            _driver.Quit();
+            _driver.Dispose();
         }
 
-        [TestCase]
-        public void CheckBuyPolis()
+        [TestCase(TestName = "_01_Переход на главную страницу"), Order(1)]
+        public void GoToHomePage()
         {
-             
-            var homePage = new HomePage(driver);
+            _homePage.GoToPage();
+            Assert.That(_homePage.Url == _driver.Url);
+        }
 
-            //a.Перейти на сайт _https://shop.vsk.ru/ 
-            homePage.GoToPage();
+        [TestCase(TestName = "_02_Переход на страницу Путешествия"), Order(2)]
+        public void GoToTravelPage()
+        {
+            var travelLink = _homePage.TravelLinkElement().GetAttribute("href");
+            _driver.Navigate().GoToUrl(travelLink);
+            Assert.That(_travelPage.Url == _driver.Url);
+        }
 
-            //b.Перейти на вкладку «Путешествия» 
+        [TestCase(TestName = "_03_Переход к оформлению полиса"), Order(3)]
+        public void GoToBuyPolisy()
+        {
+            _travelPage.GetBuyPolisyBtnElement().Click();
 
-            //почему то клик не работает
-            //homePage.TravelLinkElement().Click();
-            var travelLink = homePage.TravelLinkElement().GetAttribute("href");
-            driver.Navigate().GoToUrl(travelLink);
+            Assert.That(_buyPolisPage.Url.Contains(_driver.Url));
+        }
 
-            //c.Нажать кнопку «Купить полис» 
-            var travelPage = new TravelPage(driver);
-            travelPage.GetBuyPolisBtnElement().Click();
+        [TestCase(TestName = "_04_Оформление полиса"), Order(4)]
+        public void MakeAPolicy()
+        {
+            _buyPolisPage.SelectCountry("Египет")
+                .FillBeginDate(DateTime.Today.AddDays(5))
+                .FillEndDate(DateTime.Today.AddDays(15))
+                .MakeAPolicyBtnElement();
 
-            //d.Заполнить поля следующими данными: 
-            var buyPolisPage = new BuyPolisPage(driver);
-
-            //• Страна или город = Египет 
-            buyPolisPage.CountryFieldElement().SendKeys("Египет");
-            buyPolisPage.SelectFirstCountryInList();
-
-            //• Дата начала = Сегодня + 5 дней 
-            buyPolisPage.FillBeginDate(DateTime.Today.AddDays(5));
-
-            //• Дата окончания = Сегодня + 15 дней 
-            buyPolisPage.FillEndDate(DateTime.Today.AddDays(15));
-
-            //• Нажать кнопку «Оформить полис»
-            buyPolisPage.MakeAPolicyBtnElement().Click();
+            _buyPolisPage.WaitLoadForElement(By.XPath("//*[label='Страхователь]"));
         }
     }
 }
